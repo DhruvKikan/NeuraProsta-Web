@@ -54,7 +54,14 @@ export const DoctorPatientList = () => {
                 {patient.phone || "Phone unavailable"}
               </p>
               <Link
-                href={`/doctor/patients/${patient.$id}/reports`}
+                href={`/doctor/patients/${patient.$id}/og_reports`}
+                className="text-blue-500 hover:underline"
+                aria-label={`View original document for ${patient.name || "this patient"}`}
+              >
+                View Original Document
+              </Link>
+              <Link
+                href={`/doctor/patients/${patient.$id}/generated_reports`}
                 className="text-blue-500 hover:underline"
                 aria-label={`View reports for ${patient.name || "this patient"}`}
               >
