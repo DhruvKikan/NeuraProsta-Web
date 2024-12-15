@@ -79,8 +79,34 @@ export const columns: ColumnDef<Appointment>[] = [
     cell: ({ row }) => {
       const appointment = row.original;
 
+      const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+        if (event.target.files && event.target.files.length > 0) {
+          const file = event.target.files[0];
+          const formData = new FormData();
+          formData.append("file", file);
+
+          try {
+            const response = await fetch("/api/uploadToDrive", {
+              method: "POST",
+              body: formData,
+            });
+
+            if (!response.ok) {
+              throw new Error("Failed to upload file");
+            }
+
+            const data = await response.json();
+            console.log("Uploaded Image File ID:", data.fileId);
+            alert("Image uploaded successfully!");
+          } catch (error) {
+            console.error("Error uploading file:", error);
+            alert("Failed to upload the image.");
+          }
+        }
+      };
+
       return (
-        <div className="flex gap-1">
+        <div className="flex gap-1 items-center">
           <AppointmentModal
             patientId={appointment.patient.$id}
             userId={appointment.userId}
@@ -97,6 +123,21 @@ export const columns: ColumnDef<Appointment>[] = [
             title="Cancel Appointment"
             description="Are you sure you want to cancel your appointment?"
           />
+          <div>
+            <label
+              htmlFor={`upload-${appointment.patient.$id}`}
+              className="text-blue-500 hover:underline cursor-pointer"
+            >
+            Upload Report
+            </label>
+            <input
+              type="file"
+              id={`upload-${appointment.patient.$id}`}
+              className="hidden"
+              accept="image/*"
+              onChange={handleImageUpload}
+            />
+          </div>
         </div>
       );
     },
